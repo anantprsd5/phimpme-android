@@ -31,12 +31,6 @@ public class CameraActivityTest {
                 allOf(withId(R.id.tab_camera), isDisplayed()));
         bottomNavigationItemView.perform(click());
 
-        ViewInteraction appCompatImageButton = onView(
-                allOf(withId(R.id.switch_camera),
-                        withParent(withId(R.id.lnCam)),
-                        isDisplayed()));
-        appCompatImageButton.check(matches(isDisplayed()));
-
         ViewInteraction appCompatImageButton2 = onView(
                 allOf(withId(R.id.takephoto), isDisplayed()));
         appCompatImageButton2.check(matches(isDisplayed()));
