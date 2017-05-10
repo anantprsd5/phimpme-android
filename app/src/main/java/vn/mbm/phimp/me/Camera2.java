@@ -66,6 +66,7 @@ import vn.mbm.phimp.me.gallery3d.media.CropImage;
 import vn.mbm.phimp.me.utils.Utils;
 
 import static android.hardware.Camera.Parameters.FLASH_MODE_AUTO;
+import static android.hardware.Camera.Parameters.FLASH_MODE_OFF;
 import static android.hardware.Camera.Parameters.FLASH_MODE_ON;
 import static android.hardware.Camera.Parameters.SCENE_MODE_AUTO;
 import static android.hardware.Camera.Parameters.SCENE_MODE_HDR;
@@ -593,6 +594,10 @@ public class Camera2 extends android.support.v4.app.Fragment {
 							mCamera = null;
 						}
 						mCamera = Camera.open(1);
+						if (!hasCameraFlash(mCamera)) {
+							parameters.setFlashMode(FLASH_MODE_OFF);
+							flash.setVisibility(View.GONE);
+						}
 						// mCamera.setDisplayOrientation(90);
 						spinner.setVisibility(View.GONE);
 						iso.setVisibility(View.GONE);
@@ -610,6 +615,10 @@ public class Camera2 extends android.support.v4.app.Fragment {
 							mCamera = null;
 						}
 						mCamera = Camera.open(0);
+						if (hasCameraFlash(mCamera)) {
+							flash.setVisibility(View.VISIBLE);
+						}
+						parameters.setFlashMode(FLASH_MODE_ON);
 						if (values_keyword != null) {
 							spinner.setVisibility(View.INVISIBLE);
 							iso.setVisibility(View.VISIBLE);
@@ -626,7 +635,6 @@ public class Camera2 extends android.support.v4.app.Fragment {
 		preview.mCamera.setParameters(parameters);
 		flash = (ImageButton)view.findViewById(R.id.flash);
 		flash.bringToFront();
-		flash.setImageResource(FLASH_ON_ICON);
 		flash.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -659,6 +667,14 @@ public class Camera2 extends android.support.v4.app.Fragment {
 			}
 		});
 
+		if (PhimpMe.camera_use == 1 && !hasCameraFlash(mCamera)) {
+			parameters.setFlashMode(FLASH_MODE_OFF);
+			flash.setVisibility(View.GONE);
+		} else if (PhimpMe.camera_use == 0 && hasCameraFlash(mCamera)) {
+			flash.setVisibility(View.VISIBLE);
+			parameters.setFlashMode(FLASH_MODE_ON);
+		}
+
 		grid_overlay_button = (ImageButton)view.findViewById(R.id.grid_overlay);
 		grid_overlay_button.bringToFront();
 		if (GRID_ENABLED){
@@ -680,6 +696,11 @@ public class Camera2 extends android.support.v4.app.Fragment {
                 }
             }
 	    });
+	}
+
+	public static boolean hasCameraFlash(Camera camera) {
+		Camera.Parameters params = camera.getParameters();
+		return params.getFlashMode() == null ? false : true;
 	}
 
 	public void takePic() {
