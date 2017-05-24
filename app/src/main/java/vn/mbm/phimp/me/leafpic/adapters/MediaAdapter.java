@@ -59,52 +59,54 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
     public void onBindViewHolder(final MediaAdapter.ViewHolder holder, int position) {
 
         Media f = medias.get(position);
+        if (!f.isVideo()) {
 
-        holder.path.setTag(f);
+            holder.path.setTag(f);
 
-        holder.icon.setVisibility(View.GONE);
-
-        if (f.isGif()) {
-            Ion.with(holder.imageView.getContext())
-                    .load(f.getPath())
-                    .intoImageView(holder.imageView);
-            holder.gifIcon.setVisibility(View.VISIBLE);
-        } else {
-            Glide.with(holder.imageView.getContext())
-                    .load(f.getUri())
-                    .asBitmap()
-                    .signature(f.getSignature())
-                    .centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .thumbnail(0.5f)
-                    .placeholder(drawable)
-                    .animate(R.anim.fade_in)
-                    .into(holder.imageView);
-            holder.gifIcon.setVisibility(View.GONE);
-        }
-
-        if(f.isVideo()) {
-            holder.icon.setVisibility(View.VISIBLE);
-            holder.path.setVisibility(View.VISIBLE);
-            holder.path.setText(f.getName());
-            holder.path.setTextColor(ContextCompat.getColor(holder.path.getContext(), R.color.md_dark_primary_text));
-            holder.path.setBackgroundColor(
-                    ColorPalette.getTransparentColor(
-                            ContextCompat.getColor(holder.path.getContext(), R.color.md_black_1000), 100));
-            holder.icon.setIcon(CommunityMaterial.Icon.cmd_play_circle);
-        } else {
             holder.icon.setVisibility(View.GONE);
-            holder.path.setVisibility(View.GONE);
-        }
 
-        if (f.isSelected()) {
-            holder.icon.setIcon(CommunityMaterial.Icon.cmd_check);
-            holder.icon.setVisibility(View.VISIBLE);
-            holder.imageView.setColorFilter(0x88000000, PorterDuff.Mode.SRC_ATOP);
-            holder.layout.setPadding(15,15,15,15);
-        } else {
-            holder.imageView.clearColorFilter();
-            holder.layout.setPadding(0,0,0,0);
+            if (f.isGif()) {
+                Ion.with(holder.imageView.getContext())
+                        .load(f.getPath())
+                        .intoImageView(holder.imageView);
+                holder.gifIcon.setVisibility(View.VISIBLE);
+            } else {
+                Glide.with(holder.imageView.getContext())
+                        .load(f.getUri())
+                        .asBitmap()
+                        .signature(f.getSignature())
+                        .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .thumbnail(0.5f)
+                        .placeholder(drawable)
+                        .animate(R.anim.fade_in)
+                        .into(holder.imageView);
+                holder.gifIcon.setVisibility(View.GONE);
+            }
+
+            if (f.isVideo()) {
+                holder.icon.setVisibility(View.VISIBLE);
+                holder.path.setVisibility(View.VISIBLE);
+                holder.path.setText(f.getName());
+                holder.path.setTextColor(ContextCompat.getColor(holder.path.getContext(), R.color.md_dark_primary_text));
+                holder.path.setBackgroundColor(
+                        ColorPalette.getTransparentColor(
+                                ContextCompat.getColor(holder.path.getContext(), R.color.md_black_1000), 100));
+                holder.icon.setIcon(CommunityMaterial.Icon.cmd_play_circle);
+            } else {
+                holder.icon.setVisibility(View.GONE);
+                holder.path.setVisibility(View.GONE);
+            }
+
+            if (f.isSelected()) {
+                holder.icon.setIcon(CommunityMaterial.Icon.cmd_check);
+                holder.icon.setVisibility(View.VISIBLE);
+                holder.imageView.setColorFilter(0x88000000, PorterDuff.Mode.SRC_ATOP);
+                holder.layout.setPadding(15, 15, 15, 15);
+            } else {
+                holder.imageView.clearColorFilter();
+                holder.layout.setPadding(0, 0, 0, 0);
+            }
         }
     }
 
