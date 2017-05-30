@@ -1,5 +1,6 @@
 package vn.mbm.phimp.me.opencamera;
 
+import vn.mbm.phimp.me.Utilities.BasicCallBack;
 import vn.mbm.phimp.me.edit.FileUtils;
 import vn.mbm.phimp.me.leafpic.activities.SingleMediaActivity;
 import vn.mbm.phimp.me.base.BaseActivity;
@@ -21,6 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import android.Manifest;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -144,6 +146,9 @@ public class CameraActivity extends BaseActivity implements AudioListener.AudioL
 	public volatile boolean test_have_angle;
 	public volatile float test_angle;
 	public volatile String test_last_saved_image;
+
+
+
 
 
     @Override
@@ -372,6 +377,18 @@ public class CameraActivity extends BaseActivity implements AudioListener.AudioL
 
 		if( MyDebug.LOG )
 			Log.d(TAG, "onCreate: total time for Activity startup: " + (System.currentTimeMillis() - debug_time));
+		BasicCallBack basicCallBack = new BasicCallBack() {
+			@Override
+			public void callBack(int status, Object data) {
+				if (status==0){
+					String pathFromUri = getRealPathFromUri(CameraActivity.this,applicationInterface.getStorageUtils().getLatestMedia().uri);
+					File outputFile = FileUtils.genEditFile();
+					EditImageActivity.start(CameraActivity.this,pathFromUri,outputFile.getAbsolutePath(),ACTION_REQUEST_EDITIMAGE);
+				}
+
+			}
+		};
+		Preview.setBasicCallBack(basicCallBack);
 	}
 
 	/* This method sets the preference defaults which are set specific for a particular device.
@@ -1985,10 +2002,26 @@ public class CameraActivity extends BaseActivity implements AudioListener.AudioL
         }
 
         this.preview.takePicturePressed();
-		Uri uri = applicationInterface.getStorageUtils().getLastMediaScanned();
-		File outputFile = FileUtils.genEditFile();
-		EditImageActivity.start(this,uri.getPath(),outputFile.getAbsolutePath(),ACTION_REQUEST_EDITIMAGE);
 
+
+
+
+
+
+	}
+	public static String getRealPathFromUri(Context context, Uri contentUri) {
+		Cursor cursor = null;
+		try {
+			String[] proj = { MediaStore.Images.Media.DATA };
+			cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			cursor.moveToFirst();
+			return cursor.getString(column_index);
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+		}
 	}
 
 	/** Lock the screen - this is Open Camera's own lock to guard against accidental presses,

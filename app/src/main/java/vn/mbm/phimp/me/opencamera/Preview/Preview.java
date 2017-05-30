@@ -1,6 +1,9 @@
 package vn.mbm.phimp.me.opencamera.Preview;
 
 import vn.mbm.phimp.me.R;
+import vn.mbm.phimp.me.Utilities.BasicCallBack;
+import vn.mbm.phimp.me.edit.FileUtils;
+import vn.mbm.phimp.me.opencamera.CameraActivity;
 import vn.mbm.phimp.me.opencamera.MyDebug;
 import vn.mbm.phimp.me.R;
 import vn.mbm.phimp.me.opencamera.TakePhoto;
@@ -75,9 +78,13 @@ import android.view.WindowManager;
 import android.view.View.MeasureSpec;
 import android.widget.Toast;
 
+import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
+
 import vn.mbm.phimp.me.opencamera.Preview.ApplicationInterface;
 import vn.mbm.phimp.me.opencamera.Preview.CanvasView;
 import vn.mbm.phimp.me.opencamera.Preview.VideoQualityHandler;
+
+import static vn.mbm.phimp.me.leafpic.activities.SingleMediaActivity.ACTION_REQUEST_EDITIMAGE;
 
 /** This class was originally named due to encapsulating the camera preview,
  *  but in practice it's grown to more than this, and includes most of the
@@ -268,6 +275,12 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 	public volatile boolean test_fail_open_camera;
 	public volatile boolean test_video_failure;
 	public volatile boolean test_ticker_called; // set from MySurfaceView or CanvasView
+
+	public static void setBasicCallBack(BasicCallBack basicCallBack) {
+		Preview.basicCallBack = basicCallBack;
+	}
+
+	public static BasicCallBack basicCallBack;
 
 	public Preview(ApplicationInterface applicationInterface, ViewGroup parent) {
 		if( MyDebug.LOG ) {
@@ -3530,6 +3543,10 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 		}
 		if( MyDebug.LOG )
 			Log.d(TAG, "takePicturePressed exit");
+		if (basicCallBack!=null)
+		basicCallBack.callBack(0,"");
+
+
 	}
 
 	private void takePictureOnTimer(final long timer_delay, boolean repeated) {
