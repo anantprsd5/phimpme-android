@@ -1,5 +1,6 @@
 package vn.mbm.phimp.me.opencamera;
 
+import vn.mbm.phimp.me.edit.FileUtils;
 import vn.mbm.phimp.me.leafpic.activities.SingleMediaActivity;
 import vn.mbm.phimp.me.base.BaseActivity;
 import vn.mbm.phimp.me.leafpic.util.ThemeHelper;
@@ -81,9 +82,14 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Toast;
 import android.widget.ZoomControls;
 
+import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
+
 import vn.mbm.phimp.me.R;
+
+import static vn.mbm.phimp.me.leafpic.activities.SingleMediaActivity.ACTION_REQUEST_EDITIMAGE;
 
 /** The main Activity for Open Camera.
  */
@@ -1967,18 +1973,22 @@ public class CameraActivity extends BaseActivity implements AudioListener.AudioL
 	}
 
 	void takePicturePressed() {
-		if( MyDebug.LOG )
-			Log.d(TAG, "takePicturePressed");
+        if (MyDebug.LOG)
+            Log.d(TAG, "takePicturePressed");
 
-		closePopup();
+        closePopup();
 
-		if( applicationInterface.getGyroSensor().isRecording() ) {
-			if (MyDebug.LOG)
-				Log.d(TAG, "set next panorama point");
-			applicationInterface.setNextPanoramaPoint();
-		}
+        if (applicationInterface.getGyroSensor().isRecording()) {
+            if (MyDebug.LOG)
+                Log.d(TAG, "set next panorama point");
+            applicationInterface.setNextPanoramaPoint();
+        }
 
-		this.preview.takePicturePressed();
+        this.preview.takePicturePressed();
+		Uri uri = applicationInterface.getStorageUtils().getLastMediaScanned();
+		File outputFile = FileUtils.genEditFile();
+		EditImageActivity.start(this,uri.getPath(),outputFile.getAbsolutePath(),ACTION_REQUEST_EDITIMAGE);
+
 	}
 
 	/** Lock the screen - this is Open Camera's own lock to guard against accidental presses,
