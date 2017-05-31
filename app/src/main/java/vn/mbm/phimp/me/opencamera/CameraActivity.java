@@ -1,5 +1,7 @@
 package vn.mbm.phimp.me.opencamera;
 
+import vn.mbm.phimp.me.edit.FileUtils;
+import vn.mbm.phimp.me.editor.editimage.EditImageActivity;
 import vn.mbm.phimp.me.leafpic.activities.SingleMediaActivity;
 import vn.mbm.phimp.me.base.BaseActivity;
 import vn.mbm.phimp.me.leafpic.util.ThemeHelper;
@@ -82,6 +84,10 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.ZoomControls;
 
 import vn.mbm.phimp.me.R;
+import vn.mbm.phimp.me.utilities.BasicCallBack;
+
+import static vn.mbm.phimp.me.leafpic.activities.SingleMediaActivity.ACTION_REQUEST_EDITIMAGE;
+import static vn.mbm.phimp.me.opencamera.ImageSaver.setBasicCallBack;
 
 /** The main Activity for Open Camera.
  */
@@ -364,6 +370,16 @@ public class CameraActivity extends BaseActivity implements AudioListener.AudioL
 
 		if( MyDebug.LOG )
 			Log.d(TAG, "onCreate: total time for Activity startup: " + (System.currentTimeMillis() - debug_time));
+		BasicCallBack basicCallBack = new BasicCallBack() {
+			@Override
+			public void callBack(String filepath) {
+
+					File outputFile = FileUtils.genEditFile();
+					EditImageActivity.start(CameraActivity.this,filepath,outputFile.getAbsolutePath(),ACTION_REQUEST_EDITIMAGE);
+
+			}
+		};
+		ImageSaver.setBasicCallBack(basicCallBack);
 	}
 
 	/* This method sets the preference defaults which are set specific for a particular device.
