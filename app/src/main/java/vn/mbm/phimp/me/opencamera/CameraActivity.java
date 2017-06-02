@@ -20,24 +20,23 @@ import java.util.Locale;
 import java.util.Map;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.PorterDuff;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
-import android.media.CamcorderProfile;
 import android.media.SoundPool;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.os.StatFs;
 import android.preference.PreferenceManager;
@@ -66,6 +65,9 @@ import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.GestureDetector;
@@ -81,11 +83,14 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Toast;
 import android.widget.ZoomControls;
 
 import vn.mbm.phimp.me.R;
+import vn.mbm.phimp.me.opencamera.UI.PhotoActivity;
 import vn.mbm.phimp.me.utilities.BasicCallBack;
 
+import static android.view.View.Y;
 import static vn.mbm.phimp.me.leafpic.activities.SingleMediaActivity.ACTION_REQUEST_EDITIMAGE;
 import static vn.mbm.phimp.me.opencamera.ImageSaver.setBasicCallBack;
 
@@ -143,6 +148,7 @@ public class CameraActivity extends BaseActivity implements AudioListener.AudioL
 	public volatile float test_angle;
 	public volatile String test_last_saved_image;
 
+	public ProgressDialog progressDialog;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -358,11 +364,17 @@ public class CameraActivity extends BaseActivity implements AudioListener.AudioL
 		BasicCallBack basicCallBack = new BasicCallBack() {
 			@Override
 			public void callBack(String filepath) {
+				Handler h = new Handler(Looper.getMainLooper());
+				h.post(new Runnable() {
+					public void run() {
+						progressDialog = new ProgressDialog(CameraActivity.this);
+						progressDialog.setMessage("Generating image. Please wait...");
+						progressDialog.show();
+					}
+				});
+                PhotoActivity.start(CameraActivity.this,filepath,10);
 
-					File outputFile = FileUtils.genEditFile();
-					EditImageActivity.start(CameraActivity.this,filepath,outputFile.getAbsolutePath(),ACTION_REQUEST_EDITIMAGE);
-
-			}
+            }
 		};
 		ImageSaver.setBasicCallBack(basicCallBack);
 	}
@@ -715,6 +727,8 @@ public class CameraActivity extends BaseActivity implements AudioListener.AudioL
 
 	@Override
 	protected void onResume() {
+		if(progressDialog!=null)
+		progressDialog.dismiss();
 		setNavigationBarColor(ThemeHelper.getPrimaryColor(this));
 		long debug_time = 0;
 		if( MyDebug.LOG ) {
@@ -2864,6 +2878,4 @@ public class CameraActivity extends BaseActivity implements AudioListener.AudioL
 	public boolean hasThumbnailAnimation() {
 		return this.applicationInterface.hasThumbnailAnimation();
 	}
-
-
 }

@@ -10,7 +10,8 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     android:layout_weight="5"
-    tools:context=".opencamera.CameraActivity">
+    tools:context=".opencamera.CameraActivity"
+    android:id="@+id/main_id">
 
     <FrameLayout
         android:id="@+id/preview"
@@ -18,6 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
+
 
     <ImageButton
         android:id="@+id/take_photo"
