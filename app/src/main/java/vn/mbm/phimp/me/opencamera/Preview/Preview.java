@@ -16,6 +16,7 @@ import vn.mbm.phimp.me.opencamera.Preview.ApplicationInterface.NoFreeStorageExce
 import vn.mbm.phimp.me.opencamera.Preview.CameraSurface.CameraSurface;
 import vn.mbm.phimp.me.opencamera.Preview.CameraSurface.MySurfaceView;
 import vn.mbm.phimp.me.opencamera.Preview.CameraSurface.MyTextureView;
+import vn.mbm.phimp.me.opencamera.UI.PopupView;
 
 import java.io.File;
 import java.io.IOException;
@@ -253,6 +254,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 	private final Handler reset_continuous_focus_handler = new Handler();
 	private Runnable reset_continuous_focus_runnable;
 	private boolean autofocus_in_continuous_mode;
+    private boolean enable_sound;
 
 	// for testing; must be volatile for test project reading the state
 	private boolean is_test; // whether called from OpenCamera.test testing
@@ -3422,7 +3424,12 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 		{
 			camera_controller.setRotation(getImageVideoRotation());
 
-			boolean enable_sound = applicationInterface.getShutterSoundPref();
+            if(PopupView.sound_index == 0) {
+                enable_sound = true;
+            }
+            else {
+                enable_sound = false;
+            }
 			if( MyDebug.LOG )
 				Log.d(TAG, "enable_sound? " + enable_sound);
 			camera_controller.enableShutterSound(enable_sound);

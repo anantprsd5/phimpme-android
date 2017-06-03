@@ -28,8 +28,10 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import vn.mbm.phimp.me.opencamera.Camera.CameraActivity;
+import vn.mbm.phimp.me.opencamera.Camera.TinyDB;
 import vn.mbm.phimp.me.opencamera.CameraController.CameraController;
 import vn.mbm.phimp.me.opencamera.Camera.MyApplicationInterface;
 import vn.mbm.phimp.me.opencamera.Camera.MyDebug;
@@ -50,6 +52,8 @@ public class PopupView extends LinearLayout {
 	private static final String TAG = "PopupView";
 	public static final float ALPHA_BUTTON_SELECTED = 1.0f;
 	public static final float ALPHA_BUTTON = 0.6f;
+	public static int sound_index;
+	public TinyDB tinyDB;
 
 	private int picture_size_index = -1;
 	private int video_size_index = -1;
@@ -518,6 +522,35 @@ public class PopupView extends LinearLayout {
 					return -1;
 				}
     		});
+
+			sound_index = sharedPreferences.getInt(PreferenceKeys.getSoundModePreferenceKey(), sound_index);
+			String[] sound_states_entries = getResources().getStringArray(R.array.preference_sound_states);
+			addArrayOptionsToPopup(Arrays.asList(sound_states_entries), getResources().getString(R.string.preference_shutter_sound), true, sound_index, false, getResources().getString(R.string.preference_shutter_sound), new ArrayOptionsPopupListener() {
+				private void update() {
+					SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
+					SharedPreferences.Editor editor = sharedPreferences.edit();
+					editor.putInt(PreferenceKeys.getSoundModePreferenceKey(),sound_index);
+					editor.apply();
+				}
+				@Override
+				public int onClickPrev() {
+					if( sound_index != -1 && sound_index > 0 ) {
+						sound_index--;
+						update();
+						return sound_index;
+					}
+					return -1;
+				}
+				@Override
+				public int onClickNext() {
+					if( sound_index != -1 && sound_index < burst_mode_values.length-1 ) {
+						sound_index++;
+						update();
+						return sound_index;
+					}
+					return -1;
+				}
+			});
 
         	final String[] grid_values = getResources().getStringArray(R.array.preference_grid_values);
         	String[] grid_entries = getResources().getStringArray(R.array.preference_grid_entries);
