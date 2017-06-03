@@ -81,6 +81,19 @@ public class PopupView extends LinearLayout {
 				}
 			});
 		}
+		{
+			List<String> supported_sound_values = Arrays.asList("sound_on","sound_off");
+			addButtonOptionsToPopup(supported_sound_values, R.array.sound_icons, R.array.sound_values, getResources().getString(R.string.sound_mode), preview.getCurrentFlashValue(), "TEST_SOUND", new ButtonOptionsPopupListener() {
+				@Override
+				public void onClick(String option) {
+					if( MyDebug.LOG )
+						Log.d(TAG, "clicked flash: " + option);
+					preview.updateFlash(option);
+					main_activity.getMainUI().setPopupIcon();
+					main_activity.closePopup();
+				}
+			});
+		}
     	
 		if( preview.isVideo() && preview.isTakingPhoto() ) {
     		// don't add any more options
@@ -107,7 +120,7 @@ public class PopupView extends LinearLayout {
     				main_activity.closePopup();
     			}
     		});
-            
+
     		List<String> supported_isos;
 			final String manual_value = "m";
 			if( preview.supportsISORange() ) {

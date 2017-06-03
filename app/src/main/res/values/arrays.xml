@@ -9,6 +9,14 @@
         <item>drawable/flash_auto</item>
         <item>drawable/flash_on</item>
     </string-array>
+    <string-array name="sound_icons">
+        <item>drawable/sound_on</item>
+        <item>drawable/sound_off</item>
+    </string-array>
+    <string-array name="sound_values">
+        <item>sound_on</item>
+        <item>sound_off</item>
+    </string-array>
     <string-array name="flash_entries">
         <item>Flash Off</item>
         <item>Flash Auto</item>
