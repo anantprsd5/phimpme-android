@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.BoolRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -51,6 +52,7 @@ import vn.mbm.phimp.me.leafpic.animations.DepthPageTransformer;
 import vn.mbm.phimp.me.leafpic.data.Album;
 import vn.mbm.phimp.me.leafpic.data.base.SortingMode;
 import vn.mbm.phimp.me.leafpic.data.base.SortingOrder;
+import vn.mbm.phimp.me.leafpic.data.providers.StorageProvider;
 import vn.mbm.phimp.me.leafpic.util.AlertDialogsHelper;
 import vn.mbm.phimp.me.leafpic.util.ColorPalette;
 import vn.mbm.phimp.me.leafpic.util.ContentHelper;
@@ -91,13 +93,14 @@ public class SingleMediaActivity extends SharedMediaActivity {
     private View editImage;//
     private Bitmap mainBitmap;
     private int imageWidth, imageHeight;//
-    private String path;
     private SingleMediaActivity context;
     public static final String EXTRA_OUTPUT = "extra_output";
 
 
     private View mTakenPhoto;//拍摄照片用于编辑
     private Uri photoURI = null;
+    private Boolean mAllPhotos;
+    public String path;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,6 +112,7 @@ public class SingleMediaActivity extends SharedMediaActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mViewPager = (HackyViewPager) findViewById(R.id.photos_pager);
         securityObj= new SecurityHelper(SingleMediaActivity.this);
+        mAllPhotos = getIntent().getBooleanExtra("all photos", false);
 
         if (savedInstanceState != null)
             mViewPager.setLocked(savedInstanceState.getBoolean(ISLOCKED_ARG, false));
@@ -117,7 +121,7 @@ public class SingleMediaActivity extends SharedMediaActivity {
             Album album;
             if ((getIntent().getAction().equals(Intent.ACTION_VIEW) || getIntent().getAction().equals(ACTION_REVIEW)) && getIntent().getData() != null) {
 
-                String path = ContentHelper.getMediaPath(getApplicationContext(), getIntent().getData());
+                path = ContentHelper.getMediaPath(getApplicationContext(), getIntent().getData());
 
                 File file = null;
                 if (path != null)
@@ -169,7 +173,9 @@ public class SingleMediaActivity extends SharedMediaActivity {
                         else hideSystemUI();
                     }
                 });
+        if(!mAllPhotos)
         adapter = new MediaPagerAdapter(getSupportFragmentManager(), getAlbum().getMedia());
+        else adapter = new MediaPagerAdapter(getSupportFragmentManager(),StorageProvider.getAllShownImages(SingleMediaActivity.this));
 
         adapter.setVideoOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,8 +194,10 @@ public class SingleMediaActivity extends SharedMediaActivity {
             }
         });
 
+        if (!mAllPhotos)
         getSupportActionBar().setTitle((getAlbum().getCurrentMediaIndex() + 1) + " " + getString(R.string.of) + " " + getAlbum().getMedia().size());
-
+        else
+            getSupportActionBar().setTitle((getAlbum().getCurrentMediaIndex() + 1)+ getString(R.string.of) + " " + adapter.getCount());
         mViewPager.setAdapter(adapter);
         mViewPager.setCurrentItem(getAlbum().getCurrentMediaIndex());
         mViewPager.setPageTransformer(true, new DepthPageTransformer());

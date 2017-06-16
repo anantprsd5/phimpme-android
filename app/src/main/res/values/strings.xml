@@ -760,4 +760,5 @@
     <string name="drawable">drawable</string>
     <string name="ic_">ic_</string>
     <string name="_indicator">_indicator</string>
+    <string name="all_photos">All_photos</string>
 </resources>

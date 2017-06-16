@@ -1,6 +1,10 @@
 package vn.mbm.phimp.me.leafpic.data.providers;
 
+import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 
 import vn.mbm.phimp.me.leafpic.data.Album;
 import vn.mbm.phimp.me.leafpic.data.CustomAlbumsHelper;
@@ -22,6 +26,7 @@ public class StorageProvider {
     private ArrayList<File> excludedFolders;
     private boolean includeVideo = false;
     private PreferenceUtil SP;
+    public static ArrayList<Media> list = new ArrayList<Media>();
 
     public StorageProvider(Context context) {
         SP = PreferenceUtil.getInstance(context);
@@ -111,6 +116,35 @@ public class StorageProvider {
         for (File image : images)
             list.add(new Media(image));
         return list;
+    }
+
+    public static ArrayList<Media> getAllShownImages(Activity activity) {
+        Uri uri;
+        Cursor cursor;
+        int column_index;
+        ArrayList<String> listOfAllImages = new ArrayList<String>();
+        String absolutePathOfImage;
+        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+        String[] projection = {MediaStore.MediaColumns.DATA};
+
+        cursor = activity.getContentResolver().query(uri, projection, null,
+                null, null);
+
+        // column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
+        column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        while (cursor.moveToNext()) {
+            absolutePathOfImage = cursor.getString(column_index);
+            listOfAllImages.add(absolutePathOfImage);
+        }
+        for (String path : listOfAllImages) {
+            list.add(new Media(new File(path)));
+        }
+        return list;
+    }
+
+    public static int getAllMediaSize(){
+        return list.size();
     }
 
 }
