@@ -109,7 +109,7 @@ public class LFMainActivity extends SharedMediaActivity {
     private boolean hidden = false, pickMode = false, editMode = false, albumsMode = true, firstLaunch = true;
 
     //To handle all photos/Album conditions
-    public boolean all_photos = false;
+    public static boolean all_photos = false;
     final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
     public static ArrayList<Media> listAll;
     public int size;
@@ -1205,7 +1205,9 @@ public class LFMainActivity extends SharedMediaActivity {
                 } else {
                     getAlbum().setDefaultSortingMode(getApplicationContext(), NAME);
                     getAlbum().sortPhotos();
-                    mediaAdapter.swapDataSet(getAlbum().getMedia());
+                    if (!all_photos)
+                        mediaAdapter.swapDataSet(getAlbum().getMedia());
+                    else mediaAdapter.swapDataSet(listAll);
                 }
                 item.setChecked(true);
                 return true;
@@ -1218,7 +1220,9 @@ public class LFMainActivity extends SharedMediaActivity {
                 } else {
                     getAlbum().setDefaultSortingMode(getApplicationContext(), DATE);
                     getAlbum().sortPhotos();
-                    mediaAdapter.swapDataSet(getAlbum().getMedia());
+                    if (!all_photos)
+                        mediaAdapter.swapDataSet(getAlbum().getMedia());
+                    else mediaAdapter.swapDataSet(listAll);
                 }
                 item.setChecked(true);
                 return true;
@@ -1231,7 +1235,9 @@ public class LFMainActivity extends SharedMediaActivity {
                 } else {
                     getAlbum().setDefaultSortingMode(getApplicationContext(), SIZE);
                     getAlbum().sortPhotos();
-                    mediaAdapter.swapDataSet(getAlbum().getMedia());
+                    if (!all_photos)
+                        mediaAdapter.swapDataSet(getAlbum().getMedia());
+                    else mediaAdapter.swapDataSet(listAll);
                 }
                 item.setChecked(true);
                 return true;
@@ -1240,7 +1246,9 @@ public class LFMainActivity extends SharedMediaActivity {
                 if (!albumsMode) {
                     getAlbum().setDefaultSortingMode(getApplicationContext(), TYPE);
                     getAlbum().sortPhotos();
-                    mediaAdapter.swapDataSet(getAlbum().getMedia());
+                    if (!all_photos)
+                        mediaAdapter.swapDataSet(getAlbum().getMedia());
+                    else mediaAdapter.swapDataSet(listAll);
                     item.setChecked(true);
                 }
 
@@ -1254,7 +1262,9 @@ public class LFMainActivity extends SharedMediaActivity {
                 } else {
                     getAlbum().setDefaultSortingMode(getApplicationContext(), NUMERIC);
                     getAlbum().sortPhotos();
-                    mediaAdapter.swapDataSet(getAlbum().getMedia());
+                    if (!all_photos)
+                        mediaAdapter.swapDataSet(getAlbum().getMedia());
+                    else mediaAdapter.swapDataSet(listAll);
                 }
                 item.setChecked(true);
                 return true;
@@ -1267,7 +1277,9 @@ public class LFMainActivity extends SharedMediaActivity {
                 } else {
                     getAlbum().setDefaultSortingAscending(getApplicationContext(), item.isChecked() ? SortingOrder.DESCENDING : SortingOrder.ASCENDING);
                     getAlbum().sortPhotos();
-                    mediaAdapter.swapDataSet(getAlbum().getMedia());
+                    if (!all_photos)
+                        mediaAdapter.swapDataSet(getAlbum().getMedia());
+                    else mediaAdapter.swapDataSet(listAll);
                 }
                 item.setChecked(!item.isChecked());
                 return true;
@@ -1728,7 +1740,7 @@ public class LFMainActivity extends SharedMediaActivity {
 
         @Override
         protected void onPostExecute(Void result) {
-            mediaAdapter.swapDataSet(StorageProvider.getAllShownImages(LFMainActivity.this));
+            mediaAdapter.swapDataSet(listAll);
             if (!hidden)
                 HandlingAlbums.addAlbumToBackup(getApplicationContext(), getAlbum());
             checkNothing();

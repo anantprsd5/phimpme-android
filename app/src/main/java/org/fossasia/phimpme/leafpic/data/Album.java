@@ -5,6 +5,8 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import org.fossasia.phimpme.leafpic.activities.LFMainActivity;
 import org.fossasia.phimpme.leafpic.adapters.MediaAdapter;
 import org.fossasia.phimpme.leafpic.data.base.FilterMode;
 import org.fossasia.phimpme.leafpic.data.base.MediaComparators;
@@ -392,7 +394,9 @@ public class Album implements Serializable {
 	}
 
 	public void sortPhotos() {
+		if(!LFMainActivity.all_photos)
 		Collections.sort(media, MediaComparators.getComparator(settings.getSortingMode(), settings.getSortingOrder()));
+		else Collections.sort(LFMainActivity.listAll, MediaComparators.getComparator(settings.getSortingMode(), settings.getSortingOrder()));
 	}
 
 	public boolean copySelectedPhotos(Context context, String folderPath) {
