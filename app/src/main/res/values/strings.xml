@@ -886,4 +886,7 @@
     <string name="err_msg_host">Please add server address</string>
     <string name="err_msg_username">Please enter password</string>
     <string name="err_msg_password">Please enter password</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

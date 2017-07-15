@@ -11,9 +11,14 @@ import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
+import com.yarolegovich.wellsql.WellSql;
 
 import org.fossasia.phimpme.leafpic.data.Album;
 import org.fossasia.phimpme.leafpic.data.HandlingAlbums;
+import org.fossasia.phimpme.sharewordpress.AppComponent;
+import org.fossasia.phimpme.sharewordpress.DaggerAppComponent;
+import org.wordpress.android.fluxc.module.AppContextModule;
+import org.wordpress.android.fluxc.persistence.WellSqlConfig;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -25,6 +30,8 @@ public class MyApplication extends Application {
 
     private HandlingAlbums albums = null;
     public static Context applicationContext;
+
+    protected AppComponent mComponent;
 
     public Album getAlbum() {
         return albums.dispAlbums.size() > 0 ? albums.getCurrentAlbum() : Album.getEmptyAlbum();
@@ -65,6 +72,21 @@ public class MyApplication extends Application {
                         .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                         .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
                         .build());
+
+        super.onCreate();
+        initDaggerComponent();
+        component().inject(this);
+        WellSql.init(new WellSqlConfig(getApplicationContext()));
+    }
+
+    public AppComponent component() {
+        return mComponent;
+    }
+
+    protected void initDaggerComponent() {
+        mComponent = DaggerAppComponent.builder()
+                .appContextModule(new AppContextModule(getApplicationContext()))
+                .build();
     }
 
     @Override
