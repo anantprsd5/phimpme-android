@@ -40,6 +40,8 @@ public class Constants {
     public final static int PINTEREST = 5;
     public final static int NEXTCLOUD = 3;
     public final static int OWNCLOUD = 9;
+    public final static int BOX = 10;
+
 
 
 }

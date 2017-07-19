@@ -14,6 +14,9 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
+import com.box.androidsdk.content.BoxConfig;
+import com.box.androidsdk.content.auth.BoxAuthentication;
+import com.box.androidsdk.content.models.BoxSession;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.session.AppKeyPair;
@@ -64,6 +67,7 @@ import retrofit2.http.HEAD;
 
 import static org.fossasia.phimpme.utilities.Constants.APP_KEY;
 import static org.fossasia.phimpme.utilities.Constants.APP_SECRET;
+import static org.fossasia.phimpme.utilities.Constants.BOX;
 import static org.fossasia.phimpme.utilities.Constants.DROPBOX;
 import static org.fossasia.phimpme.utilities.Constants.DRUPAL;
 import static org.fossasia.phimpme.utilities.Constants.FACEBOOK;
@@ -99,13 +103,14 @@ public class AccountActivity extends ThemedActivity implements AccountContract.V
     private PDKClient pdkClient;
 
     public static String[] accountName = {"Facebook", "Twitter", "Drupal", "NextCloud", "Wordpress"
-            , "Pinterest", "Flickr", "Imgur", "Dropbox", "OwnCloud"};
+            , "Pinterest", "Flickr", "Imgur", "Dropbox", "OwnCloud", "Box"};
     private static final int NEXTCLOUD_REQUEST_CODE = 3;
     private static final int OWNCLOUD_REQUEST_CODE = 9;
     private static final int RESULT_OK = 1;
     public static final int IMGUR_KEY_LOGGED_IN = 2;
 
     private DropboxAPI<AndroidAuthSession> mDBApi;
+    private BoxSession sessionBox;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -129,6 +134,9 @@ public class AccountActivity extends ThemedActivity implements AccountContract.V
         getSupportActionBar().setTitle(R.string.title_account);
 
         phimpmeProgressBarHandler.show();
+
+        BoxConfig.CLIENT_ID = "ytmozlz20t52y9gt1npffnpa5m6bppkb";
+        BoxConfig.CLIENT_SECRET = "v2sR7hhpp4PHA0tCT6UyRniHTp29zpn8";
 
         pdkClient = PDKClient.configureInstance(this, getResources().getString(R.string.pinterest_app_id));
         pdkClient.onConnect(this);
@@ -237,6 +245,11 @@ public class AccountActivity extends ThemedActivity implements AccountContract.V
                     startActivityForResult(ownCloudShare, OWNCLOUD_REQUEST_CODE);
                     break;
 
+                case BOX:
+                    sessionBox = new BoxSession(AccountActivity.this);
+                    sessionBox.authenticate();
+                    break;
+
                 default:
                     Toast.makeText(this, R.string.feature_not_present,
                             Toast.LENGTH_SHORT).show();
@@ -254,6 +267,7 @@ public class AccountActivity extends ThemedActivity implements AccountContract.V
                                     accountAdapter.notifyDataSetChanged();
                                     accountPresenter.loadFromDatabase();
                                     signInSignOut.setChecked(false);
+                                    BoxAuthentication.getInstance().logoutAllUsers(AccountActivity.this);
                                 }
                             })
                     .setNegativeButton(R.string.no_action,
@@ -483,9 +497,32 @@ public class AccountActivity extends ThemedActivity implements AccountContract.V
         super.onResume();
         ActivitySwitchHelper.setContext(this);
         dropboxAuthentication();
+        boxAuthentication();
         setStatusBarColor();
         setNavBarColor();
         accountPresenter.loadFromDatabase();
+    }
+
+    private void boxAuthentication() {
+        if(sessionBox != null && sessionBox.getUser()!=null){
+            String accessToken = sessionBox.getAuthInfo().accessToken();
+
+            realm.beginTransaction();
+
+            // Creating Realm object for AccountDatabase Class
+            account = realm.createObject(AccountDatabase.class,
+                    accountName[BOX]);
+
+            // Writing values in Realm database
+
+            account.setUsername(sessionBox.getUser().getName());
+            account.setToken(String.valueOf(accessToken));
+
+            // Finally committing the whole data
+            realm.commitTransaction();
+            sessionBox.clearCache();
+            accountPresenter.loadFromDatabase();
+        }
     }
 
     private void dropboxAuthentication() {
