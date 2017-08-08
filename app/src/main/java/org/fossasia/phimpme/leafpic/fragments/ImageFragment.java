@@ -95,21 +95,30 @@ public class ImageFragment extends Fragment {
         }, 5);
     }*/
 
-    private void displayMedia(final PhotoView photoView, boolean useCache) {
+    private void displayMedia(final PhotoView photoView, final boolean useCache) {
         //PreferenceUtil SP = PreferenceUtil.getInstance(getContext());
 
         Glide.with(getContext())
-                .load(img.getUri())
-                .asBitmap().format(DecodeFormat.PREFER_RGB_565)
-                .signature(useCache ? img.getSignature(): new StringSignature(new Date().getTime()+""))
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .thumbnail(0.5f)
-                .transform(new RotateTransformation(getContext(), img.getOrientation(), false))
-                .animate(R.anim.fade_in)
+                .load(img.getThumbnail())
+                .asBitmap()
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
                         photoView.setImageBitmap(bitmap);
+                        Glide.with(getContext())
+                                .load(img.getUri())
+                                .asBitmap().format(DecodeFormat.PREFER_RGB_565)
+                                .signature(useCache ? img.getSignature(): new StringSignature(new Date().getTime()+""))
+                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                .thumbnail(0.5f)
+                                .transform(new RotateTransformation(getContext(), img.getOrientation(), false))
+                                .animate(R.anim.fade_in)
+                                .into(new SimpleTarget<Bitmap>() {
+                                    @Override
+                                    public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+                                        photoView.setImageBitmap(bitmap);
+                                    }
+                                });
                     }
                 });
 
