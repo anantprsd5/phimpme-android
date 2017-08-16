@@ -3,6 +3,7 @@ package org.fossasia.phimpme;
 import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -24,7 +25,7 @@ import io.realm.RealmConfiguration;
 /**
  * Created by dnld on 28/04/16.
  */
-public class MyApplication extends Application {
+public class MyApplication extends MultiDexApplication {
 
     private HandlingAlbums albums = null;
     public static Context applicationContext;
