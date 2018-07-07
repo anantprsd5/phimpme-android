@@ -11,10 +11,10 @@
   git config --global user.name "Anant Prasad" 
   # Clone the repository in the folder buildApk
 
-  git clone --quiet --branch master = https: // anantprsd5: $GITHUB_API_KEY@github.com/anantprsd5/phimpme-android> / dev / null 
+  git clone --quiet --branch master = https: // anantprsd5: $GITHUB_API_KEY@github.com/anantprsd5/phimpme-android development> / dev / null 
   #go into directory and copy data we're interested
 
-  cd master cp -Rf $ HOME / android / *. 
+  cd development cp -Rf $ HOME / android / *. 
   #add, commit and push files
 
   git add -f. 
