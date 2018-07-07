@@ -15,8 +15,9 @@ if [ "$COMPONENT" == "ASSEMBLE_RELEASE" ]; then
 
   # Clone the repository in the buildApk folder
   git clone --quiet --branch=apk https://fossasia:$GITHUB_API_KEY@github.com/fossasia/phimpme-android apk > /dev/null
-  cp -Rf $HOME/buildApk/*
+  
   cd apk
+  cp -Rf $HOME/buildApk/*
 
   git checkout --orphan workaround
   git add -A
