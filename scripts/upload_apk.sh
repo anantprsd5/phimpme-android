@@ -1,36 +1,26 @@
-#!/usr/bin/env bash
+  #create the new directory will contain que October generated apk
 
-if [ "$COMPONENT" == "ASSEMBLE_RELEASE" ]; then
-  # Create a new directory that will contain out generated apk
-  mkdir $HOME/buildApk/
+  mkdir $ HOME / buildApk / 
+  #copy generated apk from build folder to the folder just created
 
-  # Copy generated apk from build folder and README.md to the folder just created
-  cp -R app/build/outputs/apk/app-debug.apk $HOME/buildApk/
-  cp -R README.md $HOME/buildApk/
+  cp -R app / build / outputs / apk / app-debug.apk $ HOME / android / 
+  #go to home and git setup  
 
-  # Setup git
-  cd $HOME
-  git config --global user.email "noreply@travis.com"
-  git config --global user.name "Travis CI" 
+  cd $ HOME 
+  git config --global user.email "anantprsd5@gmail.com" 
+  git config --global user.name "Anant Prasad" 
+  # Clone the repository in the folder buildApk
 
-  # Clone the repository in the buildApk folder
-  git clone --quiet --branch=apk https://fossasia:$GITHUB_API_KEY@github.com/fossasia/phimpme-android apk > /dev/null
-  
-  cd apk
-  cp -Rf $HOME/buildApk/*
+  git clone --quiet --branch master = https: // anantprsd5: $GITHUB_API_KEY@github.com/anantprsd5/phimpme-android> / dev / null 
+  #go into directory and copy data we're interested
 
-  git checkout --orphan workaround
-  git add -A
+  cd master cp -Rf $ HOME / android / *. 
+  #add, commit and push files
 
-  # Commit and skip the tests for that commit
-  git commit -am "Travis build pushed [skip ci]"
-
-  git branch -D apk
-  git branch -m apk
-
-  # Push to the apk branch
-  git push origin apk --force --quiet> /dev/null
-fi
-
-exit 0
-
+  git add -f. 
+  git remote rm origin 
+  git remote add origin https: // anantprsd5: $GITHUB_API_KEY@github.com/anantprsd5/phimpme-android.git
+   . git add -f 
+  git commit -m "Travis build $ TRAVIS_BUILD_NUMBER pushed [skip ci] " 
+  git push origin master -fq> / dev / null 
+  echo -e" Done \ n "
